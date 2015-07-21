@@ -24,7 +24,7 @@ exports.index = function(req, res) {
 // GET /quizes/:id
 exports.show = function(req, res) {
   res.render('quizes/show', { quiz: req.quiz, errors: []});
-};
+};            // req.quiz: instancia de quiz cargada con autoload
 
 // GET /quizes/:id/answer
 exports.answer = function(req, res) {
@@ -41,22 +41,6 @@ exports.answer = function(req, res) {
   );
 };
 
-// GET /quizes/:search
-exports.index = function(req, res){
-
-  if(req.query.search) {
-  var filtro  = (req.query.search || '').replace(" ", "%");
-    models.Quiz.findAll({where:["pregunta like ?", '%'+filtro+'%'],order:'pregunta ASC'}).then(function(quizes){
-      res.render('quizes/index', {quizes: quizes, errors: []});
-    }).catch(function(error) { next(error);});
-
-  } else {
-
-   models.Quiz.findAll().then(function(quizes){
-       res.render('quizes/index', {quizes: quizes, errors: []});
-       }).catch(function(error) { next(error);});
-  }
-};
 // GET /quizes/new
 exports.new = function(req, res) {
   var quiz = models.Quiz.build( // crea objeto quiz 
@@ -82,7 +66,7 @@ exports.create = function(req, res) {
         .then( function(){ res.redirect('/quizes')}) 
       }      // res.redirect: Redirección HTTP a lista de preguntas
     }
-  );
+  ).catch(function(error){next(error)});
 };
 
 // GET /quizes/:id/edit
@@ -109,5 +93,31 @@ exports.update = function(req, res) {
         .then( function(){ res.redirect('/quizes');});
       }     // Redirección HTTP a lista de preguntas (URL relativo)
     }
-  );
+  ).catch(function(error){next(error)});
+};
+
+// DELETE /quizes/:id
+exports.destroy = function(req, res) {
+  req.quiz.destroy().then( function() {
+    res.redirect('/quizes');
+  }).catch(function(error){next(error)});
+};
+
+//  console.log("req.quiz.id: " + req.quiz.id);
+
+// GET /quizes/:search
+exports.index = function(req, res){
+
+  if(req.query.search) {
+  var filtro  = (req.query.search || '').replace(" ", "%");
+    models.Quiz.findAll({where:["pregunta like ?", '%'+filtro+'%'],order:'pregunta ASC'}).then(function(quizes){
+      res.render('quizes/index', {quizes: quizes, errors: []});
+    }).catch(function(error) { next(error);});
+
+  } else {
+
+   models.Quiz.findAll().then(function(quizes){
+       res.render('quizes/index', {quizes: quizes, errors: []});
+       }).catch(function(error) { next(error);});
+  }
 };
