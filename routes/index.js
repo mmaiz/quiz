@@ -4,6 +4,7 @@ var router = express.Router();
 var quizController = require('../controllers/quiz_controller');
 var commentController = require('../controllers/comment_controller');
 var sessionController = require('../controllers/session_controller');
+var statisticsController = require('../controllers/statistics_controller');
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -14,6 +15,9 @@ router.get('/', function(req, res) {
 router.get('/author', function(req, res) {
 	res.render('author', { title: 'Créditos', errors: []});
 });
+
+// GET estadísticas
+router.get('/quizes/statistics', statisticsController.statistics );
 
 // Autoload de comandos con :quizId
 router.param('quizId', quizController.load);  // autoload :quizId

@@ -12,7 +12,8 @@ var routes = require('./routes/index');
 
 var app = express();
 
-var timeOutSession= (2*60*1000);   // 2 minutos
+// 2 minutos auto-logout
+var timeOutSession= (2*60*1000);  
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
