@@ -12,11 +12,14 @@ var routes = require('./routes/index');
 
 var app = express();
 
+var timeOutSession= (2*60*1000);   // 2 minutos
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(partials());
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
@@ -26,6 +29,18 @@ app.use(cookieParser('Quiz 2015'));
 app.use(session());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// timeout session
+app.use(function(req, res, next) {
+    if (req.session.user) {
+      if (Date.now() - req.session.user.timeOutSession > timeOutSession) {
+        delete req.session.user;
+      } else {
+        req.session.user.timeOutSession = Date.now();
+    }
+  }
+  next();
+});
 
 // Helpers dinamicos:
 app.use(function(req, res, next) {
